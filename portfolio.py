@@ -7,8 +7,6 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-
-####
 class Portfolio:
   def __init__(self, data_symbol, sample_num = 10000):
     self.data_symbol = data_symbol
@@ -100,9 +98,9 @@ class Portfolio:
   def minimize_volatility(self, weights):
       return self.get_ret_vol_sr(weights)[1]
 
-if __name__ == "__main__":
 
 ####根据需要调整下面的参数####
+if __name__ == "__main__":
 	# 数据起始日期
 	start_date = "2015-01-01"
 	end_date = "2021-01-01"
