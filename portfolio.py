@@ -8,11 +8,12 @@ warnings.filterwarnings("ignore")
 
 
 class Portfolio:
-  def __init__(self, data_symbol, sample_num = 10000):
+  def __init__(self, data_symbol, line=True,sample_num = 10000):
     self.data_symbol = data_symbol
     self.data = self.create_stock_data(self.data_symbol)
     self.length = len(self.data.columns)
     self.sample_num = sample_num
+    self.calculate(line=line)
 
   # 用雅虎财经API创建Data
   def create_stock_data(self, data_symbol):
@@ -26,7 +27,7 @@ class Portfolio:
     data.columns = data_symbol
     return data
 
-  def calculate(self, line=True):
+  def calculate(self, line):
     # 初始化参数
     self.all_weights = np.zeros((self.sample_num, len(self.data.columns)))
     self.ret_arr = np.zeros(self.sample_num)
@@ -39,18 +40,18 @@ class Portfolio:
       self.weights = np.array(np.random.random(self.length))
       self.weights = self.weights/np.sum(self.weights)
       self.all_weights[x,:] = self.weights
-      
+
       # 计算期望收益
       # 252是美股每年的交易天数
       self.ret_arr[x] = np.sum( (self.log_ret.mean() * self.weights * 252))
       # 计算期望风险
       self.vol_arr[x] = np.sqrt(np.dot(self.weights.T, np.dot(self.log_ret.cov()*252, self.weights)))
-      
+
       # 计算夏普比率
       self.sharpe_arr[x] = self.ret_arr[x]/ self.vol_arr[x]
-    
+
     self.frontier_x = []
-    self.frontier_y = np.linspace(0, 0.3, 200)
+    self.frontier_y = np.linspace(0.15, 0.5, 200)
 
     for possible_return in self.frontier_y:
       cons = ({'type':'eq','fun': self.check_sum}, {'type':'eq','fun':lambda w : self.get_ret_vol_sr(w)[0]-possible_return})
@@ -60,9 +61,8 @@ class Portfolio:
       self.frontier_x.append(self.result['fun'])
 
   def draw(self, line=True):
-    self.calculate(line)
     plt.figure(figsize=(20,8))
-    plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='viridis', s=25)
+    plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='viridis', s=10)
     plt.colorbar(label='Sharpe Ratio')
     plt.xlabel('Volatility')
     plt.ylabel('Return')
@@ -74,12 +74,12 @@ class Portfolio:
   def report(self):
     self.optim_number = self.sharpe_arr.argmax()
     self.optim_weights = self.all_weights[self.optim_number]
-    print("模拟最佳投资组合: ")
+    print("基于所选风险资产的模拟最佳组合: ")
     for i in range(self.length):
       print("股票代码：{}, 比例：{:.2f}%".format(self.data.columns[i], self.optim_weights[i]*100))
     self.best_results_arr = self.get_ret_vol_sr( self.optim_weights)
     print("期望年化收益: {:.2f}%, 风险: {:.2f}%".format(self.best_results_arr[0]*100, self.best_results_arr[1]*100, self.best_results_arr[2]))
-    
+
 
   def get_ret_vol_sr(self, weights):
       weights = np.array(weights)
@@ -101,12 +101,12 @@ class Portfolio:
 
 ####根据需要调整下面的参数####
 if __name__ == "__main__":
-	# 数据起始日期
-	start_date = "2015-01-01"
-	end_date = "2021-01-01"
-	# 选择需要哪些资产的数据
-	data_array = ["600519.SS", "0700.HK", "AAPL", "MSFT","^GSPC","GOLD", "TSLA"]
+    # 数据起始日期
+    start_date = "2016-01-01"
+    end_date = "2021-01-01"
+    # 选择需要哪些资产的数据
+    data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT","^GSPC","GOLD", "TSLA"]
 
-	portfolio = Portfolio(data_array, sample_num=10000)
-	portfolio.draw()
-	portfolio.report()
+    portfolio = Portfolio(data_array, sample_num=100000)
+    portfolio.report()
+    portfolio.draw()
