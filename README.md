@@ -1,2 +1,2 @@
 # finance
- Calculate efficient frontier
+ Calculate the efficient frontier
