@@ -21,10 +21,17 @@ class Portfolio:
     for symbol in data_symbol:
       try:
         symbol_data = yf.download(symbol, start=start_date, end=end_date)
+        
+        str_index = []
+        for index in symbol_data.index:
+            new_index = str(index)[:10]
+            str_index.append(new_index)
+        symbol_data.index = str_index
         data = pd.concat([data, symbol_data['Close']], axis=1)
       except:
         print("请检查股票代码拼写是否有误！")
     data.columns = data_symbol
+    data = data.dropna()
     return data
 
   def calculate(self, line):
@@ -66,7 +73,8 @@ class Portfolio:
     plt.colorbar(label='Sharpe Ratio')
     plt.xlabel('Volatility')
     plt.ylabel('Return')
-    plt.xticks(np.arange(0, 0.5, step=0.02))
+    plt.xticks(np.arange(0, 0.9, step=0.1))
+    plt.yticks(np.arange(-0.3, 1.0, step=0.2)) 
     if(line):
       plt.plot(self.frontier_x, self.frontier_y, 'r--', linewidth=3)
     plt.show()
@@ -102,11 +110,12 @@ class Portfolio:
 ####根据需要调整下面的参数####
 if __name__ == "__main__":
     # 数据起始日期
-    start_date = "2016-01-01"
-    end_date = "2021-01-01"
+    start_date = "2021-01-01"
+    end_date = "2022-10-01"
     # 选择需要哪些资产的数据
-    data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT","^GSPC","GOLD", "TSLA"]
+    data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT", "TSLA"]
+    # data_array = ["BABA", "AAPL", "MSFT", "TSLA"]
 
-    portfolio = Portfolio(data_array, sample_num=100000)
+    portfolio = Portfolio(data_array, sample_num=500)
     portfolio.report()
     portfolio.draw()
