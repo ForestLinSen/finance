@@ -58,7 +58,7 @@ class Portfolio:
       self.sharpe_arr[x] = self.ret_arr[x]/ self.vol_arr[x]
 
     self.frontier_x = []
-    self.frontier_y = np.linspace(0.15, 0.5, 200)
+    self.frontier_y = np.linspace(-0.1, 0.5, 100)
 
     for possible_return in self.frontier_y:
       cons = ({'type':'eq','fun': self.check_sum}, {'type':'eq','fun':lambda w : self.get_ret_vol_sr(w)[0]-possible_return})
@@ -68,13 +68,13 @@ class Portfolio:
       self.frontier_x.append(self.result['fun'])
 
   def draw(self, line=True):
-    plt.figure(figsize=(20,8))
+    plt.figure(figsize=(15,8))
     plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='viridis', s=10)
     plt.colorbar(label='Sharpe Ratio')
     plt.xlabel('Volatility')
     plt.ylabel('Return')
-    plt.xticks(np.arange(0, 0.9, step=0.1))
-    plt.yticks(np.arange(-0.3, 1.0, step=0.2)) 
+    plt.xticks(np.arange(0, 0.5, step=0.1))
+    plt.yticks(np.arange(-0.1, 0.6, step=0.2))
     if(line):
       plt.plot(self.frontier_x, self.frontier_y, 'r--', linewidth=3)
     plt.show()
@@ -110,12 +110,12 @@ class Portfolio:
 ####根据需要调整下面的参数####
 if __name__ == "__main__":
     # 数据起始日期
-    start_date = "2021-01-01"
+    start_date = "2019-01-01"
     end_date = "2022-10-01"
     # 选择需要哪些资产的数据
     data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT", "TSLA"]
     # data_array = ["BABA", "AAPL", "MSFT", "TSLA"]
 
-    portfolio = Portfolio(data_array, sample_num=500)
+    portfolio = Portfolio(data_array, sample_num=1000)
     portfolio.report()
     portfolio.draw()
