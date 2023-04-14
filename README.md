@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ```
 
 ### 使用方法 / How to Use
-1. 在代码文件（如：main.py）中设置以下参数 / In the code file (e.g., main.py), set the following parameters:
+1. 在portfolio.py中设置以下参数 / In the code file portfolio.py, set the following parameters:
     - 数据起始日期 / Data start date （start_date）
     - 数据结束日期 / Data end date（end_date）
     - 股票代码数组 / Stock code array（data_array）
@@ -27,7 +27,7 @@ pip install -r requirements.txt
 python portfolio.py
 ```
 
-## A few notes / 一些说明
+## 一些说明 / A few notes
 
 - 修改起始时间`start_date`和`end_date`。需要注意有些公司上市时间可能比较迟，例如B站是在2018年上市，如果你的开始时间是从2015年开始，那么结果可能会不准确。
 Modify the start and end dates, `start_date` and `end_date`. Please note that some companies may have been listed later, e.g., Bilibili was listed in 2018, so if your start date is 2015, the results may be inaccurate.
