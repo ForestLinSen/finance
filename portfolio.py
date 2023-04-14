@@ -4,6 +4,8 @@ import numpy as np
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 import warnings
+from matplotlib import style
+
 warnings.filterwarnings("ignore")
 
 
@@ -56,16 +58,6 @@ class Portfolio:
           # 计算夏普比率 / Calculate Sharpe Ratio
           self.sharpe_arr[x] = self.ret_arr[x]/ self.vol_arr[x]
 
-      self.frontier_x = []
-      self.frontier_y = np.linspace(self.ret_arr.min(), self.ret_arr.max(), 100)
-
-      for possible_return in self.frontier_y:
-        cons = ({'type':'eq','fun': self.check_sum}, {'type':'eq','fun':lambda w : self.get_ret_vol_sr(w)[0]-possible_return})
-        init_guess = np.ones(self.length) / (self.length)
-        bounds = ((0,1),)*(self.length)
-        self.result = minimize(self.minimize_volatility, init_guess, method='SLSQP', bounds=bounds, constraints=cons)
-        self.frontier_x.append(self.result['fun'])
-
       # Find the optimal weights with the highest Sharpe ratio on the efficient frontier
       cons = ({'type': 'eq', 'fun': self.check_sum})
       bounds = ((0, 1),) * (self.length)
@@ -75,21 +67,36 @@ class Portfolio:
       self.optimal_weights = result_optimal.x
       self.optimal_ret, self.optimal_vol, _ = self.get_ret_vol_sr(self.optimal_weights)
 
-  def draw(self, line=True):
-    plt.figure(figsize=(15,8))
-    plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='viridis', s=10)
-    plt.colorbar(label='Sharpe Ratio')
-    plt.xlabel('Volatility')
-    plt.ylabel('Return')
-    plt.xticks(np.arange(0, 0.5, step=0.1))
-    plt.yticks(np.arange(-0.1, 0.6, step=0.2))
-    if(line):
-      plt.plot(self.frontier_x, self.frontier_y, 'r--', linewidth=3)
+      self.frontier_x = []
+      min_vol_index = np.argmin(self.vol_arr)
+      min_vol_ret = self.ret_arr[min_vol_index]
+      self.frontier_y = np.linspace(min_vol_ret, self.ret_arr.max(), 100)
 
-    # Plot the red dot on the optimal position on the efficient frontier
-    plt.scatter(self.optimal_vol, self.optimal_ret, c='red', marker='o', s=100, edgecolors='black', label='Optimal Solution')
-    plt.legend()
-    plt.show()
+      for possible_return in self.frontier_y:
+          cons = ({'type':'eq','fun': self.check_sum}, {'type':'eq','fun':lambda w : self.get_ret_vol_sr(w)[0]-possible_return})
+          init_guess = np.ones(self.length) / (self.length)
+          bounds = ((0,1),)*(self.length)
+          self.result = minimize(self.minimize_volatility, init_guess, method='SLSQP', bounds=bounds, constraints=cons)
+          self.frontier_x.append(self.result['fun'])
+
+
+
+  def draw(self, line=True):
+      style.use('seaborn-bright')
+      plt.figure(figsize=(15,8))
+      plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='inferno', s=10, alpha=0.7)
+      plt.colorbar(label='Sharpe Ratio')
+      plt.xlabel('Volatility')
+      plt.ylabel('Return')
+      plt.xticks(np.arange(0, 0.5, step=0.1))
+      plt.yticks(np.arange(-0.1, 0.6, step=0.2))
+      if(line):
+          plt.plot(self.frontier_x, self.frontier_y, color="#732AC6", linestyle='--',  linewidth=3)
+
+      # Plot the red dot on the optimal position on the efficient frontier
+      plt.scatter(self.optimal_vol, self.optimal_ret, c='#3C136B', marker='o', s=120, edgecolors='black', label='Optimal Solution')
+      plt.legend()
+      plt.show()
 
 
   def report(self):
@@ -125,7 +132,7 @@ class Portfolio:
 if __name__ == "__main__":
     # 数据起始日期 / Data start date
     start_date = "2019-01-01"
-    end_date = "2022-10-01"
+    end_date = "2023-04-01"
     # 选择需要哪些资产的数据 / Choose which assets to use
     data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT", "TSLA"]
     # data_array = ["BABA", "AAPL", "MSFT", "TSLA"]
