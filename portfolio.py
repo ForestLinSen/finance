@@ -17,8 +17,8 @@ class Portfolio:
     self.sample_num = sample_num
     self.calculate(line=line)
 
-  # 用雅虎财经API创建Data / Create Data with Yahoo Finance API
   def create_stock_data(self, data_symbol):
+    """使用雅虎财经API创建股票数据 / Create stock data using the Yahoo Finance API."""
     data = pd.DataFrame()
     for symbol in data_symbol:
       try:
@@ -30,14 +30,14 @@ class Portfolio:
             str_index.append(new_index)
         symbol_data.index = str_index
         data = pd.concat([data, symbol_data['Close']], axis=1)
-      except:
-        print("请检查股票代码拼写是否有误! / Please check the spelling of the stock code!")
+      except Exception as e:
+          print(f"股票代码有误：{symbol}，错误：{e} / Error with stock symbol {symbol}: {e}")
     data.columns = data_symbol
     data = data.dropna()
     return data
 
   def calculate(self, line):
-      # 初始化参数
+      """计算投资组合统计数据 / Calculate portfolio statistics."""
       self.all_weights = np.zeros((self.sample_num, len(self.data.columns)))
       self.ret_arr = np.zeros(self.sample_num)
       self.vol_arr = np.zeros(self.sample_num)
@@ -82,7 +82,7 @@ class Portfolio:
 
 
   def draw(self, line=True):
-      style.use('seaborn-bright')
+      # style.use('seaborn-bright')
       plt.figure(figsize=(15,8))
       plt.scatter(self.vol_arr, self.ret_arr, c=self.sharpe_arr, cmap='inferno', s=10, alpha=0.7)
       plt.colorbar(label='Sharpe Ratio')
@@ -103,11 +103,11 @@ class Portfolio:
     self.optim_number = self.sharpe_arr.argmax()
     self.optim_weights = self.all_weights[self.optim_number]
     print("所选择的时间范围为：{} - {} / The selected time range is: {} - {}".format(start_date, end_date, start_date, end_date))
-    print("基于所选风险资产的模拟最佳组合: / The best portfolio simulated based on the selected risk assets:")
+    print("基于所选风险资产的模拟最佳组合: / The optimal portfolio simulated based on the selected risk assets:")
     for i in range(self.length):
-        print("股票代码(Stock Code): {}, 比例(Proportion)：{:.2f}%".format(self.data.columns[i], self.optim_weights[i]*100))
+        print("股票(Stock): {}, 权重(weight): {:.2f}%".format(self.data.columns[i], self.optim_weights[i]*100))
     self.best_results_arr = self.get_ret_vol_sr(self.optim_weights)
-    print("期望年化收益(Expected Annual Return): {:.2f}%, 风险(Risk): {:.2f}%".format(self.best_results_arr[0]*100, self.best_results_arr[1]*100, self.best_results_arr[2]))
+    print("期望年化收益(Expected Annual Return): {:.2f}%, 风险(Volatility): {:.2f}%".format(self.best_results_arr[0]*100, self.best_results_arr[1]*100, self.best_results_arr[2]))
 
 
   def get_ret_vol_sr(self, weights):
@@ -128,11 +128,10 @@ class Portfolio:
       return self.get_ret_vol_sr(weights)[1]
 
 
-####根据需要调整下面的参数####
 if __name__ == "__main__":
     # 数据起始日期 / Data start date
     start_date = "2019-01-01"
-    end_date = "2023-04-01"
+    end_date = "2024-04-01"
     # 选择需要哪些资产的数据 / Choose which assets to use
     data_array = ["600519.SS", "0700.HK","BABA", "AAPL", "MSFT", "TSLA"]
     # data_array = ["BABA", "AAPL", "MSFT", "TSLA"]
