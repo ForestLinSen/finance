@@ -90,11 +90,10 @@ class Portfolio:
             f"{weights_desc}"
         )
 
-        # Offset in points so the annotation stays close and visible regardless of axis limits
         plt.annotate(
             annotation_text,
             xy=(self.optimal_vol, self.optimal_ret),
-            xytext=(10, 10),  # 10 points to the right and up
+            xytext=(10, 10),
             textcoords="offset points",
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=0.5),
             arrowprops=dict(arrowstyle="->", lw=0.5),
@@ -115,7 +114,6 @@ class Portfolio:
         best_ret, best_vol, best_sr = self.get_ret_vol_sr(best_weights)
         print(f"Expected Annual Return: {best_ret*100:.2f}%, Volatility: {best_vol*100:.2f}%, Sharpe: {best_sr:.2f}")
 
-    # Helper functions
     def get_ret_vol_sr(self, weights):
         weights = np.asarray(weights)
         ret = np.sum(self.log_ret.mean() * weights) * 252

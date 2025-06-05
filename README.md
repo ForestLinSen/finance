@@ -1,7 +1,7 @@
 [EN](README.md) | [中文](README_CN.md)
 
 ## About
-Finance Visualisations is a lightweight desktop app that lets you explore core portfolio analytics—Efficient Frontier, VaR & CVaR, and CAPM beta—straight from live Yahoo Finance data with a single click, and I'll keep updating it with additional visual insights in the future.
+Finance Visualisations is a lightweight desktop app that lets you explore core portfolio analytics,  including Efficient Frontier, VaR & CVaR, and CAPM beta, straight from live Yahoo Finance data with a single click, and I'll keep updating it with additional visual insights in the future.
 
 The efficient frontier calculation part of this code is primarily based on the article by Fábio Neves, where you can find detailed explanations: [Plotting Markowitz Efficient Frontier with Python](https://towardsdatascience.com/python-markowitz-optimization-b5e1623060f5). I have extended this by integrating the Yahoo Finance API, allowing direct calculations using stock codes. Weights are generated using the Dirichlet distribution rather than the default uniform distribution, ensuring that the sum of weights equals 1.
 
@@ -13,10 +13,9 @@ In the project folder, install the dependencies using the following command:
 pip install -r requirements.txt
 ```
 
-## How to Use (GUI update)
+## How to Use (GUI)
 
-1. You can also launch a simple GUI tool that integrates multiple
-   visualisations:
+1. You can launch a simple GUI tool that integrates multiple visualisations:
 
 ```
 python gui_tool.py
