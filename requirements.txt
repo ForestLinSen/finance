@@ -1,4 +1,4 @@
-yfinance
+yfinance==0.2.61
 pandas
 numpy
 scipy
