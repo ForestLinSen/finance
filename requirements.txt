@@ -1,5 +1,9 @@
 yfinance==0.2.61
+yfinance
 pandas
 numpy
 scipy
 matplotlib
+streamlit
+seaborn
+plotly
